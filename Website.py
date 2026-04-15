@@ -59,16 +59,16 @@ col1, col2 = st.columns([1, 4])
 with col1:
     st.write("### 🔍 Find a Station")
     
-    # NEW: Text Search Feature
+    # 1. SEARCH INPUT
     search_query = st.text_input("Type a street name or neighborhood:", placeholder="e.g. Reforma")
 
-    # Filter the dataframe based on the search query
+    # Filter based on search
     if search_query:
         filtered_df = df[df['name'].str.contains(search_query, case=False, na=False)]
     else:
         filtered_df = df
 
-    # Dropdown now only shows stations that match the search
+    # 2. THE SINGLE DROPDOWN
     if not filtered_df.empty:
         station_options = sorted(filtered_df['station_id'].astype(int).unique())
         station_number = st.selectbox(
@@ -76,17 +76,21 @@ with col1:
             options=station_options
         )
         
-        # Pull details for the selected station
+        # Pull details and coordinates for the selected station
         selected_data = df[df['station_id'] == str(station_number)].iloc[0]
+        target_lat = selected_data['lat']
+        target_lon = selected_data['lon']
+        
         st.info(f"**Station:** {selected_data['name']}")
         
         c1, c2 = st.columns(2)
         c1.write(f"🚲 Bikes: **{selected_data['num_bikes_available']}**")
         c2.write(f"🅿️ Docks: **{selected_data['num_docks_available']}**")
     else:
-        st.error("No stations found with that name.")
-        # Fallback to avoid breaking the map
-        station_number = df['station_id'].iloc[0] 
+        st.error("No stations found.")
+        # Fallback to map center if nothing is found
+        station_number = df['station_id'].iloc[0]
+        target_lat, target_lon = df['lat'].mean(), df['lon'].mean()
 
     st.markdown("---")
     st.subheader("📖 Quick Dashboard Guide")
