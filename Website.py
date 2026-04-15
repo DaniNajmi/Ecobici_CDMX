@@ -148,7 +148,6 @@ with col2:
         folium.Marker(
             location=[temp['lat'].values[0], temp['lon'].values[0]],
             popup=f"Selected Station: {temp['name'].values[0]}",
-            tooltip="You are here!",
             icon=folium.Icon(icon="cloud", color="blue"),
         ).add_to(m)
 
