@@ -4,7 +4,7 @@ import folium
 from streamlit_folium import st_folium
 import requests
 
-# --- 1. SETUP & DATA FETCHING ---
+# 1. SETUP & DATA FETCHING
 st.set_page_config(layout="wide", page_title="EcoPulse CDMX")
 
 @st.cache_data # This keeps the app fast by not re-downloading every click
@@ -24,19 +24,19 @@ except Exception as e:
     st.error("Could not connect to Ecobici API. Please check your internet connection.")
     st.stop()
 
-# --- 2. ROW 1: HEADER ---
+# 2. ROW 1: HEADER
 # Title and Caption as requested
 st.title("🚲 EcoPulse CDMX")
 st.caption("Developed by Daniela Najmias Lang | Bioengineering & Systems Design")
 st.markdown("---")
 
-# --- 3. ROW 2: SIDEBAR & MAP ---
+# 3. ROW 2: SIDEBAR & MAP
 # Creating columns: col1 for the dropdown (left), col2 for the map (right)
 col1, col2 = st.columns([1, 4]) 
 
 with col1:
     st.write("### Search")
-    # Dropdown menu using your station_id column
+    # Dropdown menu using station_id column
     # We convert to int then sort so the list is numerical
     station_options = sorted(df['station_id'].astype(int).unique())
     station_number = st.selectbox(
@@ -49,7 +49,7 @@ with col1:
     st.info(f"**Station Name:**\n{selected_name}")
 
 with col2:
-    # Your exact plotting logic adapted for Streamlit
+    # Plotting logic adapted for Streamlit
     # We center the map on the average of all coordinates
     m = folium.Map(
         location=[df['lat'].mean(), df['lon'].mean()], 
