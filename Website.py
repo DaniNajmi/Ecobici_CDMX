@@ -26,7 +26,8 @@ except Exception as e:
 
 # 2. ROW 1: HEADER
 # Title and Caption as requested
-st.title("EcoPulse CDMX 🚲🇲🇽: An interactive, real-time dashboard built to visualize and analyze Mexico City's Ecobici bike-sharing network.")
+st.title("EcoPulse CDMX 🚲🇲🇽:")
+st.title(" An interactive, real-time dashboard built to visualize and analyze Mexico City's Ecobici bike-sharing network.")
 st.caption("Developed by Daniela Najmias Lang | Bioengineering & Systems Design")
 st.markdown("---")
 
