@@ -111,42 +111,31 @@ with col1:
 
 with col2:
     # Initialize Map
-    
-    # AUTO-ZOOM KEY: We set 'location' to the target_lat/lon 
-    # and set a high zoom_start (16 is great for street level)
+
+    # 3. THE MAP (Uses target_lat/target_lon from above)
     m = folium.Map(
         location=[target_lat, target_lon], 
-        zoom_start=16, 
+        zoom_start=16 if search_query or 'selected_data' in locals() else 13, 
         tiles="cartodbpositron"
     )
 
-    # --- UPDATED: TRAFFIC LIGHT MARKERS ---
+    # All Traffic Light Markers
     for n in range(len(df)):
         bikes = df['num_bikes_available'].iloc[n]
+        icon_color = "green" if bikes > 5 else "orange" if bikes > 0 else "red"
         
-        # Color Logic: Green if plenty, Orange if low, Red if empty
-        if bikes > 5:
-            icon_color = "green"
-        elif bikes > 0:
-            icon_color = "orange"
-        else:
-            icon_color = "red"
-            
         folium.Marker(
             location=[df['lat'].iloc[n], df['lon'].iloc[n]],
             tooltip=f"ID {df['station_id'].iloc[n]}: {bikes} bikes",
             icon=folium.Icon(color=icon_color),
         ).add_to(m)
 
-    # Highlight the selected station with a Blue Cloud
-    temp = df[df['station_id'] == str(station_number)]
-    if not temp.empty:
+    # The Selection Highlight (Cloud)
+    if not filtered_df.empty:
         folium.Marker(
-            location=[temp['lat'].values[0], temp['lon'].values[0]],
-            popup=f"Selected Station: {temp['name'].values[0]}",
+            location=[target_lat, target_lon],
+            popup=f"Selected Station: {selected_data['name']}",
             icon=folium.Icon(icon="cloud", color="blue"),
         ).add_to(m)
 
-
-    # Render
-    st_folium(m, width=1000, height=500,key="zoom_map")
+    st_folium(m, width=1200, height=600, key="zoom_map")
