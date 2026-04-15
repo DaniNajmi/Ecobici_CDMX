@@ -109,14 +109,6 @@ with col1:
         
         st.caption("Data refreshes automatically every 60 seconds.")
 
-    station_options = sorted(df['station_id'].astype(int).unique())
-    station_number = st.selectbox("Select Station ID:", options=station_options)
-    
-    # Grab the coordinates for the chosen station
-    selected_data = df[df['station_id'] == str(station_number)].iloc[0]
-    target_lat = selected_data['lat']
-    target_lon = selected_data['lon']
-
 with col2:
     # Initialize Map
     
