@@ -71,6 +71,23 @@ with col1:
     c1.write(f"🚲 Bikes: **{selected_data['num_bikes_available']}**")
     c2.write(f"🅿️ Docks: **{selected_data['num_docks_available']}**")
 
+    st.markdown("---")
+    st.subheader("📖 Quick Dashboard Guide")
+    
+    with st.expander("How to read this app", expanded=True):
+        st.write("**Top Metrics:**")
+        st.write("- **Bikes:** Total units ready to unlock.")
+        st.write("- **Docks:** Total spaces to return a bike.")
+        st.write("- **Occupancy:** System-wide usage level.")
+        
+        st.write("**Map Colors:**")
+        st.success("🟢 **High:** > 5 bikes")
+        st.warning("🟠 **Low:** 1-5 bikes")
+        st.error("🔴 **Empty:** 0 bikes / Inactive")
+        st.info("☁️ **Blue Cloud:** Selected Station")
+        
+        st.caption("Data refreshes automatically every 60 seconds.")
+
 with col2:
     # Initialize Map
     m = folium.Map(
