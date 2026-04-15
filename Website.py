@@ -58,35 +58,32 @@ col1, col2 = st.columns([1, 4])
 
 with col1:
     st.write("### 🔍 Find a Station")
-    
-    # NEW: Text Search Feature
     search_query = st.text_input("Type a street name or neighborhood:", placeholder="e.g. Reforma")
 
-    # Filter the dataframe based on the search query
     if search_query:
         filtered_df = df[df['name'].str.contains(search_query, case=False, na=False)]
     else:
         filtered_df = df
 
-    # Dropdown now only shows stations that match the search
     if not filtered_df.empty:
         station_options = sorted(filtered_df['station_id'].astype(int).unique())
-        station_number = st.selectbox(
-            f"Results ({len(filtered_df)} found):", 
-            options=station_options
-        )
+        station_number = st.selectbox(f"Results ({len(filtered_df)} found):", options=station_options)
         
-        # Pull details for the selected station
+        # 1. GET DATA FOR AUTO-ZOOM & ADDRESS
         selected_data = df[df['station_id'] == str(station_number)].iloc[0]
-        st.info(f"**Station:** {selected_data['name']}")
+        
+        st.info(f"**Selected Station:**\n{selected_data['name']}")
+        
+        # 2. SHOW THE "GO-TO" ADDRESS
+        # Most GBFS feeds include a 'name' that is the intersection/address.
+        st.success(f"📍 **Exact Location:**\n{selected_data['name']}")
         
         c1, c2 = st.columns(2)
         c1.write(f"🚲 Bikes: **{selected_data['num_bikes_available']}**")
         c2.write(f"🅿️ Docks: **{selected_data['num_docks_available']}**")
     else:
-        st.error("No stations found with that name.")
-        # Fallback to avoid breaking the map
-        station_number = df['station_id'].iloc[0] 
+        st.error("No stations found.")
+        station_number = df['station_id'].iloc[0]
 
     st.markdown("---")
     st.subheader("📖 Quick Dashboard Guide")
@@ -106,30 +103,36 @@ with col1:
         st.caption("Data refreshes automatically every 60 seconds.")
 
 with col2:
-    # Initialize Map
+    # 3. AUTO-ZOOM LOGIC
+    # If a station is selected, we center the map on its specific lat/lon
+    # We also increase the zoom level from 13 to 16 for a "street view" feel
+    target_station = df[df['station_id'] == str(station_number)].iloc[0]
+    
     m = folium.Map(
-        location=[df['lat'].mean(), df['lon'].mean()], 
-        zoom_start=13, 
-        tiles="cartodbpositron" 
+        location=[target_station['lat'], target_station['lon']], 
+        zoom_start=16, # Deeper zoom for navigation
+        tiles="cartodbpositron"
     )
 
-    # --- UPDATED: TRAFFIC LIGHT MARKERS ---
+    # Add all markers (Standard Traffic Lights)
     for n in range(len(df)):
         bikes = df['num_bikes_available'].iloc[n]
+        icon_color = "green" if bikes > 5 else "orange" if bikes > 0 else "red"
         
-        # Color Logic: Green if plenty, Orange if low, Red if empty
-        if bikes > 5:
-            icon_color = "green"
-        elif bikes > 0:
-            icon_color = "orange"
-        else:
-            icon_color = "red"
-            
         folium.Marker(
             location=[df['lat'].iloc[n], df['lon'].iloc[n]],
-            tooltip=f"ID {df['station_id'].iloc[n]}: {bikes} bikes",
+            tooltip=f"ID {df['station_id'].iloc[n]}",
             icon=folium.Icon(color=icon_color),
         ).add_to(m)
+
+    # The Selection Highlight (Cloud)
+    folium.Marker(
+        location=[target_station['lat'], target_station['lon']],
+        popup=f"YOU ARE HERE: {target_station['name']}",
+        icon=folium.Icon(icon="cloud", color="blue", icon_color="white"),
+    ).add_to(m)
+
+    st_folium(m, width=1200, height=600, key="ecobici_map")
 
     # Highlight the selected station with a Blue Cloud
     temp = df[df['station_id'] == str(station_number)]
