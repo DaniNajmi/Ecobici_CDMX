@@ -57,7 +57,6 @@ st.markdown("---")
 col1, col2 = st.columns([1, 4]) 
 
 with col1:
-    with col1:
     st.write("### 🔍 Find a Station")
     
     # NEW: Text Search Feature
