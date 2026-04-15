@@ -1,5 +1,5 @@
 # Ecobici Live Tracker: CDMX
-# Daniela Najmias Lang
+## Daniela Najmias Lang
 
 ### Real-Time Micro-Mobility Analytics Dashboard
 
