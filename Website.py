@@ -57,19 +57,37 @@ st.markdown("---")
 col1, col2 = st.columns([1, 4]) 
 
 with col1:
-    st.write("### 🔍 Search")
-    station_options = sorted(df['station_id'].astype(int).unique())
-    station_number = st.selectbox("Select Station ID:", options=station_options)
+    with col1:
+    st.write("### 🔍 Find a Station")
     
-    # Pull details for the selected station
-    selected_data = df[df['station_id'] == str(station_number)].iloc[0]
-    
-    st.info(f"**Station:** {selected_data['name']}")
-    
-    # Show specific live stats for this station in the sidebar
-    c1, c2 = st.columns(2)
-    c1.write(f"🚲 Bikes: **{selected_data['num_bikes_available']}**")
-    c2.write(f"🅿️ Docks: **{selected_data['num_docks_available']}**")
+    # NEW: Text Search Feature
+    search_query = st.text_input("Type a street name or neighborhood:", placeholder="e.g. Reforma")
+
+    # Filter the dataframe based on the search query
+    if search_query:
+        filtered_df = df[df['name'].str.contains(search_query, case=False, na=False)]
+    else:
+        filtered_df = df
+
+    # Dropdown now only shows stations that match the search
+    if not filtered_df.empty:
+        station_options = sorted(filtered_df['station_id'].astype(int).unique())
+        station_number = st.selectbox(
+            f"Results ({len(filtered_df)} found):", 
+            options=station_options
+        )
+        
+        # Pull details for the selected station
+        selected_data = df[df['station_id'] == str(station_number)].iloc[0]
+        st.info(f"**Station:** {selected_data['name']}")
+        
+        c1, c2 = st.columns(2)
+        c1.write(f"🚲 Bikes: **{selected_data['num_bikes_available']}**")
+        c2.write(f"🅿️ Docks: **{selected_data['num_docks_available']}**")
+    else:
+        st.error("No stations found with that name.")
+        # Fallback to avoid breaking the map
+        station_number = df['station_id'].iloc[0] 
 
     st.markdown("---")
     st.subheader("📖 Quick Dashboard Guide")
