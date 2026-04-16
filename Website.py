@@ -86,6 +86,14 @@ with col1:
         c1, c2 = st.columns(2)
         c1.write(f"🚲 Bikes: **{selected_data['num_bikes_available']}**")
         c2.write(f"🅿️ Docks: **{selected_data['num_docks_available']}**")
+        
+        # GOOGLE MAPS NAVIGATION BUTTON
+        st.markdown("---")
+        # Create the specific URL using the station's lat/lon
+        google_maps_url = f"https://www.google.com/maps/search/?api=1&query={target_lat},{target_lon}"
+        
+        st.link_button("🚀 Navigate to Station", google_maps_url, use_container_width=True)
+        st.caption("Opens Google Maps with the exact GPS coordinates.")
     else:
         st.error("No stations found.")
         # Fallback to map center if nothing is found
