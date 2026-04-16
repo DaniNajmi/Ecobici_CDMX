@@ -91,9 +91,9 @@ with col1:
         st.markdown("---")
         # Create the specific URL using the station's lat/lon
         google_maps_url = f"https://www.google.com/maps/search/?api=1&query={target_lat},{target_lon}"
-        
         st.link_button("🚀 Navigate to Station", google_maps_url, use_container_width=True)
         st.caption("Opens Google Maps with the exact GPS coordinates.")
+        
     else:
         st.error("No stations found.")
         # Fallback to map center if nothing is found
